@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # auto install the latest 
-curl -o commit.sh https://raw.githubusercontent.com/dharmendrasha/commit-helper/main/commit.sh && chmod -R 777 commit.sh
+curl -o commit.sh https://raw.githubusercontent.com/dharmendrasha/commit-helper/1-auto-update/commit.sh && chmod -R 777 commit.sh
 
 branchName=$(git branch --show-current)
 

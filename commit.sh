@@ -5,7 +5,7 @@ set -fb
 readonly THISDIR=$(cd "$(dirname "$0")" ; pwd)
 readonly MY_NAME=$(basename "$0")
 readonly FOLDER_NAME=".commit"
-readonly FILE_TO_FETCH_URL="https://raw.githubusercontent.com/dharmendrasha/commit-helper/main/commit.sh"
+readonly FILE_TO_FETCH_URL="https://raw.githubusercontent.com/dharmendrasha/commit-helper/main/src/commit.sh"
 readonly FILE_NAME="${THISDIR}/${FOLDER_NAME}/git-commit.sh"
 readonly EXISTING_SHELL_SCRIPT="${FILE_NAME}"
 readonly EXECUTABLE_SHELL_SCRIPT="${FILE_NAME}"

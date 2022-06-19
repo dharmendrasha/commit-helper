@@ -1,61 +1,63 @@
-#!/bin/bash
+#!/usr/bin/env bash
+#
+set -fb
 
-#self update approach start
+readonly THISDIR=$(cd "$(dirname "$0")" ; pwd)
+readonly MY_NAME=$(basename "$0")
+readonly FILE_TO_FETCH_URL="https://raw.githubusercontent.com/dharmendrasha/commit-helper/main/commit.sh"
+readonly FILE_NAME="${THISDIR}/.commit/git-commit.sh"
+readonly EXISTING_SHELL_SCRIPT="${FILE_NAME}"
+readonly EXECUTABLE_SHELL_SCRIPT="${FILE_NAME}"
+readonly TEMP_FILE="${THISDIR}/.commit/tmp.file"
 
-#self update approach ends
+mkdir -p "$THISDIR/.commit"
+touch "$EXISTING_SHELL_SCRIPT"
 
-branchName=$(git branch --show-current)
+function get_remote_file() {
+  readonly REQUEST_URL=$1
+  readonly OUTPUT_FILENAME=$2
+  if [ -n "$(which curl)" ]; then
+    $(curl -s -o "${TEMP_FILE}"  "$REQUEST_URL")
+    if [[ $? -eq 0 ]]; then
+      mv "${TEMP_FILE}" "${OUTPUT_FILENAME}"
+      chmod 777 "${OUTPUT_FILENAME}"
+    else
+      return 1
+    fi
+  fi
+}
 
-if [ "$1" == "pull" ]; then
-    git pull origin $branchName
-fi
+function clean_up() {
+  # clean up code (if required) that has to execute every time here
+  rm -f "$TEMP_FILE"
+  return 1
+}
 
-if [ "$1" == "stash" ]; then
-    git stash origin $branchName
-fi
+function self_clean_up() {
+  rm -f "${EXECUTABLE_SHELL_SCRIPT}"
+}
 
-git add .
+function update_self_and_invoke() {
+  get_remote_file "${FILE_TO_FETCH_URL}" "${EXECUTABLE_SHELL_SCRIPT}"
+  if [ $? -ne 0 ]; then
+    cp "$TEMP_FILE" "${EXECUTABLE_SHELL_SCRIPT}"
+  fi
 
-if [ "$1" == "last" ]; then
-    lastcommit=$(git log -1 --pretty=%B)
+  chmod 755 "${EXECUTABLE_SHELL_SCRIPT}"
+
+  exec "${EXECUTABLE_SHELL_SCRIPT}" "$@"
+}
+function main() {
+  cp "${EXECUTABLE_SHELL_SCRIPT}" "${EXISTING_SHELL_SCRIPT}"
+  # your code here
+} 
+
+if [[ $MY_NAME = \.* ]]; then
+  # invoke real main program
+  trap "clean_up; self_clean_up" EXIT
+  main "$@"
 else
-
-    echo "Commenting ======================================================================================"
-    defaultHeadline=feat
-    echo "Whats is the headline {feat|fix|chore|refactor|test} : default $defaultHeadline"
-
-    read headlineRead
-    headline="${headlineRead:-"$defaultHeadline"}"
-
-
-    echo "What is the subject {module_name} default $branchName : "
-
-    read subjectRead
-
-    subject="${subjectRead:-"$branchName"}"
-
-    echo "What you did here : "
-
-    read message
-
-    lastcommit="$headline($subject): $message"
-
-fi
-
-git commit -m "$lastcommit"
-
-if [ "$1" == "rebase" ]; then
-    git rebase --continue
-    exit
-fi
-
-echo "Do you also want push? (y/n): default y, press ENTER to continue"
-
-read push
-
-if [ "$push" = "n" ]; then
-    echo "Good Bye."
-else
-    git push origin $branchName
-    echo "Successfully pushed. Have a good day."
+  # update myself and invoke updated version
+  trap clean_up EXIT
+  update_self_and_invoke "$@"
 fi

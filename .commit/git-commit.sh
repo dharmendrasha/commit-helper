@@ -1,9 +1,5 @@
 #!/bin/bash
 
-#self update approach start
-
-#self update approach ends
-
 branchName=$(git branch --show-current)
 
 if [ "$1" == "pull" ]; then

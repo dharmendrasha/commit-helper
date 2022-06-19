@@ -1,5 +1,7 @@
 #!/bin/bash
 
+#test
+
 branchName=$(git branch --show-current)
 
 if [ "$1" == "pull" ]; then

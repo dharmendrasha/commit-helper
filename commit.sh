@@ -1,16 +1,17 @@
 #!/usr/bin/env bash
-#
+
 set -fb
 
 readonly THISDIR=$(cd "$(dirname "$0")" ; pwd)
 readonly MY_NAME=$(basename "$0")
+readonly FOLDER_NAME=".commit"
 readonly FILE_TO_FETCH_URL="https://raw.githubusercontent.com/dharmendrasha/commit-helper/main/commit.sh"
-readonly FILE_NAME="${THISDIR}/.commit/git-commit.sh"
+readonly FILE_NAME="${THISDIR}/${FOLDER_NAME}/git-commit.sh"
 readonly EXISTING_SHELL_SCRIPT="${FILE_NAME}"
 readonly EXECUTABLE_SHELL_SCRIPT="${FILE_NAME}"
-readonly TEMP_FILE="${THISDIR}/.commit/tmp.file"
+readonly TEMP_FILE="${THISDIR}/${FOLDER_NAME}/tmp.file"
 
-mkdir -p "$THISDIR/.commit"
+mkdir -p "$THISDIR/${FOLDER_NAME}"
 touch "$EXISTING_SHELL_SCRIPT"
 
 function get_remote_file() {
